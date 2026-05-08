@@ -1,26 +1,30 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-    // Bearer token
-    // [Bearer, token] after splitting
+  // Bearer token
+  // [Bearer, token] after splitting
 
-    try {
-        const token = req.headers.authorization.split(" ")[1];
+  try {
+    const token = req.headers.authorization.split(" ")[1];
 
-        if (!token) {
-            return res.status(401).json({ message: 'Unauthorizad access, token is missing' });
-        }  
-        
-        let decodedData;
-
-        decodedData = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decodedData.id; //defines actual user
-
-        next();
-    } catch (error) {
-        res.status(401).json({ message: 'Unauthorized access, invalid Token', error: error.message });
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorizad access, token is missing" });
     }
 
-  }
+    let decodedData;
 
-  module.exports = auth;
+    decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decodedData.id; //defines actual user
+
+    next();
+  } catch (error) {
+    res.status(401).json({
+      message: "Unauthorized access, invalid Token",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = auth;

@@ -32,34 +32,54 @@ const register = async (req, res) => {
       { expiresIn: "1h" },
     );
 
-    res.status(201).json({ message: "User created successfully", result: newUser, token });
+    res
+      .status(201)
+      .json({ message: "User created successfully", result: newUser, token });
   } catch (error) {
-    res.status(500).json({ message: "Error while registering user", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error while registering user", error: error.message });
   }
 };
 
 const login = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    try {
-        const existingUser = await User.findOne({ email });
+  try {
+    const existingUser = await User.findOne({ email });
 
-        if (!existingUser) {
-            return res.status(404).json({ message: 'User not found, please register first'});
-        }
-
-        const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
-
-        if (!isPasswordCorrect) {
-            return res.status(404).json({ message: 'The password is incorrect'});
-        }
-
-        const token = jwt.sign({ id: existingUser._id, email: existingUser.email}, process.env.JWT_SECRET, { expiresIn: '1h'});
-
-        res.status(200).json({ message: 'Login successful', results: { name: existingUser.name, email: existingUser.email}, token});
-
-    } catch (error) {
-        res.status(500).json({ message: 'Error while logging in', error: error.message});
+    if (!existingUser) {
+      return res
+        .status(404)
+        .json({ message: "User not found, please register first" });
     }
-}
+
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      existingUser.password,
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(404).json({ message: "The password is incorrect" });
+    }
+
+    const token = jwt.sign(
+      { id: existingUser._id, email: existingUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+    );
+
+    res
+      .status(200)
+      .json({
+        message: "Login successful",
+        results: { name: existingUser.name, email: existingUser.email },
+        token,
+      });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error while logging in", error: error.message });
+  }
+};
 module.exports = { register, login };
