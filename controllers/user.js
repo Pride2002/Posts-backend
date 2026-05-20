@@ -22,6 +22,7 @@ const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      confirmPassword: hashedPassword
     });
 
     await newUser.save();
@@ -41,6 +42,8 @@ const register = async (req, res) => {
       .json({ message: "Error while registering user", error: error.message });
   }
 };
+
+//Login
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -73,7 +76,7 @@ const login = async (req, res) => {
       .status(200)
       .json({
         message: "Login successful",
-        results: { name: existingUser.name, email: existingUser.email },
+        result: { name: existingUser.name, email: existingUser.email },
         token,
       });
   } catch (error) {

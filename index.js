@@ -2,6 +2,8 @@ const dns = require("dns");
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
+const cors = require("cors");
+
 const express = require("express");
 
 const connectDB = require("./db");
@@ -13,6 +15,16 @@ const postRoutes = require("./routes/post");
 
 const app = express();
 app.use(express.json());
+
+// Middleware to handle CORS
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Posts API");
